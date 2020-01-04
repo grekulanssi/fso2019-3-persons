@@ -2,6 +2,8 @@ console.log('Warming up the server engine...')
 
 const express = require('express')
 const app = express()
+const bodyParser = require('body-parser')
+app.use(bodyParser.json())
 
 let persons = [
     {
@@ -51,6 +53,40 @@ app.delete('/api/persons/:id', (req, res) => {
 
     res.status(204).end()
 })
+
+app.post('/api/persons', (req, res) => {
+    const body = req.body
+
+    if (!body.name) {
+        return res.status(400).json({
+            error: 'name missing'
+        })
+    }
+    if (!body.number) {
+        return res.status(400).json({
+            error: 'number missing'
+        })
+    }
+
+    const person = {
+        name: body.name,
+        number: body.number,
+        id: generateId()
+    }
+
+    persons = persons.concat(person)
+
+    res.json(person)
+})
+
+/*
+"Getting a random integer between two values, inclusive":
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+*/
+const generateId = () => {
+    return Math.floor(Math.random() * (999999 - persons.length + 1)) + persons.length
+}
+
 
 const PORT = 3001
 app.listen(PORT, () => {

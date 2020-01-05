@@ -8,7 +8,25 @@ const app = express()
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 
-app.use(morgan('tiny'))
+const cors = require('cors')
+app.use(cors)
+
+/* As posted by Julio Coco in TKTL Full Stack Telegram group: */
+morgan.token('body', function (req, res) { 
+    return JSON.stringify(req.body)
+})
+
+/* As posted by Julio Coco in TKTL Full Stack Telegram group: */
+app.use(morgan(function (tokens, req, res) {
+  return [
+    tokens.method(req, res),
+    tokens.url(req, res),
+    tokens.status(req, res),
+    tokens.res(req, res, 'content-length'), '-',
+    tokens['response-time'](req, res), 'ms',
+    tokens.body(req,res)
+  ].join(' ')
+}))
 
 let persons = [
     {

@@ -114,8 +114,8 @@ const generateId = () => {
     return Math.floor(Math.random() * (999999 - persons.length + 1)) + persons.length
 }
 
-
 const PORT = process.env.PORT || 3001
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })

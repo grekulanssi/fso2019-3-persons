@@ -2,14 +2,12 @@ console.log('Warming up the server engine...')
 
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 
 const app = express()
 
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())
-
-const cors = require('cors')
-app.use(cors)
 
 /* As posted by Julio Coco in TKTL Full Stack Telegram group: */
 morgan.token('body', function (req, res) { 
@@ -27,6 +25,8 @@ app.use(morgan(function (tokens, req, res) {
     tokens.body(req,res)
   ].join(' ')
 }))
+
+app.use(cors())
 
 let persons = [
     {

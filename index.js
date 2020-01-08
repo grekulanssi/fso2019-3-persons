@@ -32,29 +32,6 @@ app.use(morgan(function (tokens, req, res) {
 
 app.use(cors())
 
-let persons = [
-    {
-        "name": "Arto Hellas",
-        "number": "040-123456",
-        "id": 1
-    },
-    {
-        "name": "Ada Lovelace",
-        "number": "39-44-5323523",
-        "id": 2
-    },
-    {
-        "name": "Dan Abramov",
-        "number": "12-43-234345",
-        "id": 3
-    },
-    {
-        "name": "Mary Poppendieck",
-        "number": "39-23-6423122",
-        "id": 4
-    }
-]
-
 app.get('/api/persons', (req, res) => {
     Person.find({}).then(persons => {
         res.json(persons.map(p => p.toJSON()))
@@ -62,7 +39,10 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.get('/info', (req, res) => {
-    res.send('<p>Phonebook has info for ' + persons.length + ' people</p>' + new Date() + '<p>')
+    Person.find({}).then(persons => {
+        res.send('<p>Phonebook has info for ' + persons.length + ' people</p>' + new Date() + '<p>')
+    })
+    
 })
 
 app.get('/api/persons/:id', (req, res, next) => {
@@ -84,21 +64,15 @@ app.delete('/api/persons/:id', (req, res, next) => {
       res.status(204).end()
     })
     .catch(error => next(error))
-/* the old way:
-
-    const id = Number(req.params.id)
-    persons = persons.filter(person => person.id !== id)
-
-    res.status(204).end()
-    */
 })
 
    
 
 app.post('/api/persons', (req, res) => {
     const body = req.body
-
-    if (body.name === undefined) {
+/*
+    if (body.name == undefined || body.name == "") {
+        console.log('MENI TÄNNE')
         return res.status(400).json({
             error: 'name missing'
         })
@@ -107,11 +81,12 @@ app.post('/api/persons', (req, res) => {
             error: 'name must be unique'
         })
     }
-    if (body.number === undefined) {
+    if (body.number == undefined || body.number == "") {
         return res.status(400).json({
             error: 'number missing'
         })
     }
+*/
 
     const person = new Person ({
         name: body.name,
@@ -122,6 +97,21 @@ app.post('/api/persons', (req, res) => {
         res.json(savedPerson.toJSON())
     })
 })
+
+app.put('/api/persons/:id', (req, res, next) => {
+    const body = req.body
+  
+    const person = {
+      name: body.name,
+      number: body.number
+    }
+  
+    Person.findByIdAndUpdate(req.params.id, person, { new: true })
+      .then(updatedPerson => {
+        res.json(updatedPerson.toJSON())
+      })
+      .catch(error => next(error))
+  })
 
 const unknownEndpoint = (req, res) => {
     console.log('Error: unknown endpoint')

@@ -66,7 +66,7 @@ app.get('/info', (req, res) => {
 })
 
 app.get('/api/persons/:id', (req, res, next) => {
-    console.log('trying to find someone')
+    console.log('trying to find someone...')
     Person.findById(req.params.id).then(p => {
         if (p) {
             res.json(p.toJSON())
@@ -77,12 +77,23 @@ app.get('/api/persons/:id', (req, res, next) => {
     .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
+    console.log('trying to remove someone...')
+    Person.findByIdAndRemove(req.params.id)
+    .then(result => {
+      res.status(204).end()
+    })
+    .catch(error => next(error))
+/* the old way:
+
     const id = Number(req.params.id)
     persons = persons.filter(person => person.id !== id)
 
     res.status(204).end()
+    */
 })
+
+   
 
 app.post('/api/persons', (req, res) => {
     const body = req.body

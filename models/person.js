@@ -1,5 +1,10 @@
 const mongoose = require('mongoose')
 
+/* These settings to avoid deprecation warnings, see:
+https://mongoosejs.com/docs/deprecations.html */
+mongoose.set('useFindAndModify', false);
+mongoose.set('useUnifiedTopology', true);
+
 const url = process.env.MONGODB_URI
 
 console.log('connecting to', url)

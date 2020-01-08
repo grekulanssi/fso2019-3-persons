@@ -1,8 +1,10 @@
 console.log('Warming up the server engine...')
 
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const Person = require('./models/person')
 
 const app = express()
 
@@ -54,7 +56,9 @@ let persons = [
 ]
 
 app.get('/api/persons', (req, res) => {
-    res.json(persons)
+    Person.find({}).then(persons => {
+        res.json(persons.map(p => p.toJSON()))
+    })
 })
 
 app.get('/info', (req, res) => {
@@ -62,14 +66,10 @@ app.get('/info', (req, res) => {
 })
 
 app.get('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    const person = persons.find(person => person.id === id)
-
-    if (person) {
-        res.json(person)
-    } else {
-        res.status(404).end()
-    }
+    console.log('trying to find someone')
+    Person.findById(req.params.id).then(p => {
+        res.json(p.toJSON())
+    })
 })
 
 app.delete('/api/persons/:id', (req, res) => {
@@ -82,7 +82,7 @@ app.delete('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
     const body = req.body
 
-    if (!body.name) {
+    if (body.name === undefined) {
         return res.status(400).json({
             error: 'name missing'
         })
@@ -91,22 +91,22 @@ app.post('/api/persons', (req, res) => {
             error: 'name must be unique'
         })
     }
-    if (!body.number) {
+    if (body.number === undefined) {
         return res.status(400).json({
             error: 'number missing'
         })
     }
 
-    const person = {
+    const person = new Person ({
         name: body.name,
         number: body.number,
-        id: generateId()
-    }
+    })
 
-    persons = persons.concat(person)
-
-    res.json(person)
+    person.save().then(savedPerson => {
+        res.json(savedPerson.toJSON())
+    })
 })
+  
 
 /*
 "Getting a random integer between two values, inclusive":
@@ -116,8 +116,7 @@ const generateId = () => {
     return Math.floor(Math.random() * (999999 - persons.length + 1)) + persons.length
 }
 
-const PORT = process.env.PORT || 3001
-
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server now running on port ${PORT}`)
 })

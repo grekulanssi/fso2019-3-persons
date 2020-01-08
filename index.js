@@ -9,6 +9,8 @@ const Person = require('./models/person')
 const app = express()
 
 const bodyParser = require('body-parser')
+
+app.use(express.static('build'))
 app.use(bodyParser.json())
 
 /* As posted by Julio Coco in TKTL Full Stack Telegram group: */
@@ -29,8 +31,6 @@ app.use(morgan(function (tokens, req, res) {
 }))
 
 app.use(cors())
-
-app.use(express.static('build'))
 
 let persons = [
     {
@@ -65,11 +65,16 @@ app.get('/info', (req, res) => {
     res.send('<p>Phonebook has info for ' + persons.length + ' people</p>' + new Date() + '<p>')
 })
 
-app.get('/api/persons/:id', (req, res) => {
+app.get('/api/persons/:id', (req, res, next) => {
     console.log('trying to find someone')
     Person.findById(req.params.id).then(p => {
-        res.json(p.toJSON())
+        if (p) {
+            res.json(p.toJSON())
+        } else {
+            next()
+        }
     })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (req, res) => {
@@ -106,15 +111,25 @@ app.post('/api/persons', (req, res) => {
         res.json(savedPerson.toJSON())
     })
 })
-  
 
-/*
-"Getting a random integer between two values, inclusive":
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-*/
-const generateId = () => {
-    return Math.floor(Math.random() * (999999 - persons.length + 1)) + persons.length
+const unknownEndpoint = (req, res) => {
+    console.log('Error: unknown endpoint')
+    res.status(404).send({ error: 'unknown endpoint' })
 }
+
+app.use(unknownEndpoint)
+
+const errorHandler = (error, req, res, next) => {
+    console.error(error.message)
+
+    if (error.name === 'CastError' && error.kind == 'ObjectId') {
+        return res.status(400).send({ error: 'malformatted id' })
+    }
+
+    next(error)
+}
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {

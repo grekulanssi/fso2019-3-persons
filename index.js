@@ -14,20 +14,20 @@ app.use(express.static('build'))
 app.use(bodyParser.json())
 
 /* As posted by Julio Coco in TKTL Full Stack Telegram group: */
-morgan.token('body', function (req, res) { 
+morgan.token('body', function (req, res) {
     return JSON.stringify(req.body)
 })
 
 /* As posted by Julio Coco in TKTL Full Stack Telegram group: */
 app.use(morgan(function (tokens, req, res) {
-  return [
-    tokens.method(req, res),
-    tokens.url(req, res),
-    tokens.status(req, res),
-    tokens.res(req, res, 'content-length'), '-',
-    tokens['response-time'](req, res), 'ms',
-    tokens.body(req,res)
-  ].join(' ')
+    return [
+        tokens.method(req, res),
+        tokens.url(req, res),
+        tokens.status(req, res),
+        tokens.res(req, res, 'content-length'), '-',
+        tokens['response-time'](req, res), 'ms',
+        tokens.body(req, res)
+    ].join(' ')
 }))
 
 app.use(cors())
@@ -42,7 +42,7 @@ app.get('/info', (req, res) => {
     Person.find({}).then(persons => {
         res.send('<p>Phonebook has info for ' + persons.length + ' people</p>' + new Date() + '<p>')
     })
-    
+
 })
 
 app.get('/api/persons/:id', (req, res, next) => {
@@ -54,41 +54,24 @@ app.get('/api/persons/:id', (req, res, next) => {
             next()
         }
     })
-    .catch(error => next(error))
+        .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
     console.log('trying to remove someone...')
     Person.findByIdAndRemove(req.params.id)
-    .then(result => {
-      res.status(204).end()
-    })
-    .catch(error => next(error))
+        .then(result => {
+            res.status(204).end()
+        })
+        .catch(error => next(error))
 })
 
-   
+
 
 app.post('/api/persons', (req, res, next) => {
     const body = req.body
-/*
-    if (body.name == undefined || body.name == "") {
-        console.log('MENI TÄNNE')
-        return res.status(400).json({
-            error: 'name missing'
-        })
-    } else if (persons.some(p => p.name === body.name)) {
-        return res.status(400).json({
-            error: 'name must be unique'
-        })
-    }
-    if (body.number == undefined || body.number == "") {
-        return res.status(400).json({
-            error: 'number missing'
-        })
-    }
-*/
 
-    const person = new Person ({
+    const person = new Person({
         name: body.name,
         number: body.number,
     })
@@ -104,18 +87,19 @@ app.post('/api/persons', (req, res, next) => {
 
 app.put('/api/persons/:id', (req, res, next) => {
     const body = req.body
-  
+
     const person = {
-      name: body.name,
-      number: body.number
+        name: body.name,
+        number: body.number
     }
-  
-    Person.findByIdAndUpdate(req.params.id, person, { new: true })
-      .then(updatedPerson => {
-        res.json(updatedPerson.toJSON())
-      })
-      .catch(error => next(error))
-  })
+
+    Person.findByIdAndUpdate(req.params.id, person, { new: true, runValidators: true, context: 'query' } )
+        .then(updatedPerson => {
+            res.json(updatedPerson.toJSON())
+            console.log('BOOM')
+        })
+        .catch(error => next(error))
+})
 
 const unknownEndpoint = (req, res) => {
     console.log('Error: unknown endpoint')
@@ -131,8 +115,8 @@ const errorHandler = (error, req, res, next) => {
     if (error.name === 'CastError' && error.kind == 'ObjectId') {
         return res.status(400).send({ error: 'malformatted id' })
     } else if (error.name === 'ValidationError') {
-        return res.status(400).json({ error: error.message })
-    }        
+        return res.status(400).json({ error: error.message, type: 'validation' })
+    }
 
     next(error)
 }

@@ -14,7 +14,7 @@ app.use(express.static('build'))
 app.use(bodyParser.json())
 
 /* As posted by Julio Coco in TKTL Full Stack Telegram group: */
-morgan.token('body', function (req, res) {
+morgan.token('body', function (req) {
     return JSON.stringify(req.body)
 })
 
@@ -60,13 +60,11 @@ app.get('/api/persons/:id', (req, res, next) => {
 app.delete('/api/persons/:id', (req, res, next) => {
     console.log('trying to remove someone...')
     Person.findByIdAndRemove(req.params.id)
-        .then(result => {
+        .then(() => {
             res.status(204).end()
         })
         .catch(error => next(error))
 })
-
-
 
 app.post('/api/persons', (req, res, next) => {
     const body = req.body
@@ -93,7 +91,7 @@ app.put('/api/persons/:id', (req, res, next) => {
         number: body.number
     }
 
-    Person.findByIdAndUpdate(req.params.id, person, { new: true, runValidators: true, context: 'query' } )
+    Person.findByIdAndUpdate(req.params.id, person, { new: true, runValidators: true, context: 'query' })
         .then(updatedPerson => {
             res.json(updatedPerson.toJSON())
             console.log('BOOM')
@@ -112,7 +110,7 @@ const errorHandler = (error, req, res, next) => {
     console.log('Houston, we have a problem...')
     console.error(error.message)
 
-    if (error.name === 'CastError' && error.kind == 'ObjectId') {
+    if (error.name === 'CastError' && error.kind === 'ObjectId') {
         return res.status(400).send({ error: 'malformatted id' })
     } else if (error.name === 'ValidationError') {
         return res.status(400).json({ error: error.message, type: 'validation' })

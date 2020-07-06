@@ -2,6 +2,8 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
+//const config = require('./utils/config')
+const logger = require('./utils/logger')
 
 const blogSchema = mongoose.Schema({
     title: String,
@@ -19,7 +21,7 @@ blogSchema.set('toJSON', {
 const Blog = mongoose.model('Blog', blogSchema)
 
 if (process.argv.length < 3) {
-    console.log('give password as argument, please')
+    logger.error('give password as argument, please')
     process.exit(1)
 }
 const mongoPw = process.argv[2]
@@ -49,5 +51,5 @@ app.post('/api/blogs', (request, response) => {
 
 const PORT = 3003
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
+    logger.info(`Server running on port ${PORT}`)
 })

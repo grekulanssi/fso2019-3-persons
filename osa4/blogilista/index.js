@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
-//const config = require('./utils/config')
+const config = require('./utils/config')
 const logger = require('./utils/logger')
 
 const blogSchema = mongoose.Schema({
@@ -19,14 +19,12 @@ blogSchema.set('toJSON', {
     }
 })
 const Blog = mongoose.model('Blog', blogSchema)
-
+/*
 if (process.argv.length < 3) {
     logger.error('give password as argument, please')
     process.exit(1)
-}
-const mongoPw = process.argv[2]
-const mongoUrl = `mongodb+srv://fullstack19:${mongoPw}@cluster0-8dujm.mongodb.net/blogilista?retryWrites=true&w=majority`
-mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+}*/
+mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 app.use(cors())
 app.use(express.json())
@@ -49,7 +47,6 @@ app.post('/api/blogs', (request, response) => {
         })
 })
 
-const PORT = 3003
-app.listen(PORT, () => {
-    logger.info(`Server running on port ${PORT}`)
+app.listen(config.PORT, () => {
+    logger.info(`Server running on port ${config.PORT}`)
 })

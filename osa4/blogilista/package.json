@@ -1,0 +1,19 @@
+{
+  "name": "blogilista",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "test": "echo \\\"Error: no test specified\\\" && exit 1"
+  },
+  "author": "Anssi Grekula",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "mongoose": "^5.9.21"
+  }
+}

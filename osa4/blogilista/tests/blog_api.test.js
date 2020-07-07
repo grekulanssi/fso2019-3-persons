@@ -12,7 +12,7 @@ beforeEach(async () => {
     await Blog.insertMany(helper.initialBlogs)
 })
 
-describe('blog api tests', () => {
+describe('blog api GET tests', () => {
     test('blogs are returned as json', async () => {
         await api
             .get('/api/blogs')
@@ -26,7 +26,23 @@ describe('blog api tests', () => {
     test('one correct blog is found within the response', async () => {
         const response = await api.get('/api/blogs')
         const contents = response.body.map(r => r.title)
-        expect(contents).toContain('Test Go To Statement Considered Harmful')
+        expect(contents).toContain('TEST Go To Statement Considered Harmful')
+    })
+})
+
+describe('blog api POST tests', () => {
+    test('amount of blogs is increased by one', async () => {
+        await api
+            .post('/api/blogs')
+            .send(helper.newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+        const contents = blogsAtEnd.map(b => b.title)
+        expect(contents).toContain('TEST TDD harms architecture')
     })
 })
 

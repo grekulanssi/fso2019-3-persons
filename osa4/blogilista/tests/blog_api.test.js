@@ -28,6 +28,11 @@ describe('blog api GET tests', () => {
         const contents = response.body.map(r => r.title)
         expect(contents).toContain('TEST Go To Statement Considered Harmful')
     })
+    test('added blog has a field id insted of _id', async () => {
+        const response = await api.get('/api/blogs')
+        expect(response.body[0].id).toBeDefined()
+        expect(response.body[0]._id).not.toBeDefined()
+    })
 })
 
 describe('blog api POST tests', () => {
@@ -44,6 +49,7 @@ describe('blog api POST tests', () => {
         const contents = blogsAtEnd.map(b => b.title)
         expect(contents).toContain('TEST TDD harms architecture')
     })
+
 })
 
 afterAll(() => {

@@ -2,7 +2,7 @@ POST http://localhost:3003/api/blogs/
 Content-Type: application/json
 
 {
-    "title": "Tesriblogaus",
+    "title": "Kolmas bloggi",
     "author": "Ansri Gee",
     "url": "https://google.fi/",
     "likes": 1234

@@ -4,16 +4,17 @@
   "description": "Fullstack harjoitusta",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
     "lint": "eslint .",
-    "start": "node index.js",
-    "test": "jest --verbose"
+    "start": "cross-env NODE_ENV=production node index.js",
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand"
   },
   "author": "Anssi Grekula",
   "license": "MIT",
   "devDependencies": {
     "jest": "^26.1.0",
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "supertest": "^4.0.2"
   },
   "repository": {
     "type": "git",
@@ -21,8 +22,13 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
+    "cross-env": "^7.0.2",
+    "dotenv": "^8.2.0",
+    "eslint": "^7.4.0",
     "express": "^4.17.1",
-    "mongoose": "^5.9.21"
+    "express-async-errors": "^3.1.1",
+    "lint": "^0.7.0",
+    "mongoose": "^5.9.22"
   },
   "jest": {
     "testEnvironment": "node"

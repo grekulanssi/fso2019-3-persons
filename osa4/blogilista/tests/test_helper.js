@@ -28,6 +28,15 @@ const newBlog = {
     __v: 0
 }
 
+const newBlogWithoutLikes = {
+    _id: '5a422bc61b54a676234d17fc',
+    title: 'TEST Type wars',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+    //likes: null,
+    __v: 0
+}
+
 const nonExistingId = async () => {
     const blog = new Blog({ title: 'toBeDeleted' })
     await blog.save()
@@ -42,5 +51,5 @@ const blogsInDb = async () => {
 }
 
 module.exports = {
-    initialBlogs, nonExistingId, blogsInDb, newBlog
+    initialBlogs, nonExistingId, blogsInDb, newBlog, newBlogWithoutLikes
 }

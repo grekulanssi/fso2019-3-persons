@@ -49,6 +49,16 @@ describe('blog api POST tests', () => {
         const contents = blogsAtEnd.map(b => b.title)
         expect(contents).toContain('TEST TDD harms architecture')
     })
+    test('if added blog has no value in likes, it will be set to 0', async () => {
+        await api
+            .post('/api/blogs')
+            .send(helper.newBlogWithoutLikes)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd[blogsAtEnd.length-1].likes).toBe(0)
+    })
 
 })
 

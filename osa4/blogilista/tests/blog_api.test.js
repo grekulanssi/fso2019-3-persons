@@ -59,7 +59,12 @@ describe('blog api POST tests', () => {
         const blogsAtEnd = await helper.blogsInDb()
         expect(blogsAtEnd[blogsAtEnd.length-1].likes).toBe(0)
     })
-
+    test.only('if added blog lacks title and url, we get HTTP 400', async () => {
+        await api
+            .post('/api/blogs')
+            .send(helper.newBlogWithoutTitleAndUrl)
+            .expect(400)
+    })
 })
 
 describe('blog api DELETE tests', () => {

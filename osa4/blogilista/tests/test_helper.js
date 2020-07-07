@@ -37,6 +37,13 @@ const newBlogWithoutLikes = {
     __v: 0
 }
 
+const newBlogWithoutTitleAndUrl = {
+    _id: '5a422b3a1b54a676234d17f9',
+    author: 'Edsger W. Dijkstra',
+    likes: 12,
+    __v: 0
+}
+
 const nonExistingId = async () => {
     const blog = new Blog({ title: 'toBeDeleted' })
     await blog.save()
@@ -51,5 +58,5 @@ const blogsInDb = async () => {
 }
 
 module.exports = {
-    initialBlogs, nonExistingId, blogsInDb, newBlog, newBlogWithoutLikes
+    initialBlogs, nonExistingId, blogsInDb, newBlog, newBlogWithoutLikes, newBlogWithoutTitleAndUrl
 }

@@ -52,6 +52,18 @@ describe('blog api POST tests', () => {
 
 })
 
+describe('blog api DELETE tests', () => {
+    test('amount of blogs is decreased by one', async () => {
+        await api
+            .delete('/api/blogs/5a422a851b54a676234d17f7')
+            .expect(204)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+    })
+
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })

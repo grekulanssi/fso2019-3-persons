@@ -59,7 +59,7 @@ describe('blog api POST tests', () => {
         const blogsAtEnd = await helper.blogsInDb()
         expect(blogsAtEnd[blogsAtEnd.length-1].likes).toBe(0)
     })
-    test.only('if added blog lacks title and url, we get HTTP 400', async () => {
+    test('if added blog lacks title and url, we get HTTP 400', async () => {
         await api
             .post('/api/blogs')
             .send(helper.newBlogWithoutTitleAndUrl)
@@ -75,6 +75,19 @@ describe('blog api DELETE tests', () => {
 
         const blogsAtEnd = await helper.blogsInDb()
         expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+    })
+
+})
+
+describe('blog api PUT tests', () => {
+    test('amount of blogs remains the same', async () => {
+        await api
+            .put('/api/blogs/5a422a851b54a676234d17f7')
+            .send(helper.updatedBlog)
+            .expect(201)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
     })
 
 })

@@ -1,0 +1,10 @@
+PUT http://localhost:3003/api/blogs/5f04814587490a0621809dd5
+Content-Type: application/json
+
+{
+    "title": "Kolmas bloggi muokattu",
+    "author": "Ansri Gee muokattu",
+    "url": "https://google.fi/muokattu",
+    "likes": 100,
+    "__v": 0
+}

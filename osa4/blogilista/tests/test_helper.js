@@ -44,6 +44,15 @@ const newBlogWithoutTitleAndUrl = {
     __v: 0
 }
 
+const updatedBlog = {
+    _id: '5a422a851b54a676234d17f7',
+    title: 'TEST React patterns',
+    author: 'Michael Chan',
+    url: 'https://reactpatterns.com/',
+    likes: 999,
+    __v: 0
+}
+
 const nonExistingId = async () => {
     const blog = new Blog({ title: 'toBeDeleted' })
     await blog.save()
@@ -58,5 +67,11 @@ const blogsInDb = async () => {
 }
 
 module.exports = {
-    initialBlogs, nonExistingId, blogsInDb, newBlog, newBlogWithoutLikes, newBlogWithoutTitleAndUrl
+    initialBlogs,
+    nonExistingId,
+    blogsInDb,
+    newBlog,
+    newBlogWithoutLikes,
+    newBlogWithoutTitleAndUrl,
+    updatedBlog
 }

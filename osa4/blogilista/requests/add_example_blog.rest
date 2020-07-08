@@ -2,8 +2,9 @@ POST http://localhost:3003/api/blogs/
 Content-Type: application/json
 
 {
-    "title": "Kolmas bloggi",
-    "author": "Ansri Gee",
+    "title": "käyttäjä toine bloggi",
+    "author": "kirjoittaja",
     "url": "https://google.fi/",
-    "likes": 1234
+    "likes": 1234,
+    "userId": "5f0594ed84057a52bbfffec0"
 }

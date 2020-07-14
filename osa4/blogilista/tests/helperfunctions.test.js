@@ -240,7 +240,11 @@ describe('author with most blogs', () => {
 })
 
 describe('author with most likes', () => {
-    test.only('get something', () => {
+    test('get correct entry when given a long list', () => {
         expect(listHelper.mostLikes(blogs36)).toEqual(mostLikesExample)
     })
+    test('returns empty object if given empty list', () => {
+        expect(listHelper.mostLikes([])).toEqual({})
+    })
+
 })

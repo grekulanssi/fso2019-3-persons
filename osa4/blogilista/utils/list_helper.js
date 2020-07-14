@@ -42,6 +42,7 @@ const mergeLikes = authorsLikes => {
 }
 
 const mostLikes = (blogs) => {
+    if(_.isEmpty(blogs)) return { }
     let authorsLikes = []
     blogs.forEach(blog => {
         authorsLikes.push({

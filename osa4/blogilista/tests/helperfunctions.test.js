@@ -185,9 +185,14 @@ const lastCrappyBlog = {
     __v: 0
 }
 
-const exampleObject = {
+const mostBlogsExample = {
     author: 'Robert C. Martin',
     blogs: 3
+}
+
+const mostLikesExample = {
+    author: 'Edsger W. Dijkstra',
+    likes: 17
 }
 
 
@@ -229,7 +234,13 @@ describe('favourite blog tests', () => {
 })
 
 describe('author with most blogs', () => {
-    test.only('get correct author and amount of blogs', () => {
-        expect(listHelper.mostBlogs(blogs36)).toEqual(exampleObject)
+    test('get correct author and amount of blogs', () => {
+        expect(listHelper.mostBlogs(blogs36)).toEqual(mostBlogsExample)
+    })
+})
+
+describe('author with most likes', () => {
+    test.only('get something', () => {
+        expect(listHelper.mostLikes(blogs36)).toEqual(mostLikesExample)
     })
 })

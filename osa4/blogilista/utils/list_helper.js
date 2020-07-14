@@ -17,18 +17,6 @@ const favoriteBlog = (blogs) => {
     }, {})
 }
 
-/*
-4.6*
-Määrittele funktio mostBlogs joka saa parametrikseen taulukollisen blogeja.
-Funktio selvittää kirjoittajan, kenellä on eniten blogeja.
-Funktion paluuarvo kertoo myös ennätysblogaajan blogien määrän:
-{
-  author: "Robert C. Martin",
-  blogs: 3
-}
-Jos ennätysblogaajia on monta, riittää että funktio palauttaa niistä jonkun.
-*/
-
 const mostBlogs = (blogs) => {
     const authors = blogs.map(blog => {
         return blog.author
@@ -40,23 +28,28 @@ const mostBlogs = (blogs) => {
     }
 }
 
-
-/*
-Määrittele funktio mostLikes joka saa parametrikseen taulukollisen blogeja.
-Funktio selvittää kirjoittajan, kenen blogeilla on eniten tykkäyksiä.
-Funktion paluuarvo kertoo myös suosikkiblogaajan likejen yhteenlasketun määrän:
-{
-  author: "Edsger W. Dijkstra",
-  likes: 17
+const mergeLikes = authorsLikes => {
+    const result = []
+    authorsLikes.forEach(entry => {
+        let foundAuthor = _.find(result, { 'author': entry.author })
+        if(foundAuthor) {
+            foundAuthor.likes += entry.likes
+        } else {
+            result.push(entry)
+        }
+    })
+    return _.orderBy(result, 'likes', 'desc')[0]
 }
-Jos suosikkiblogaajia on monta, riittää että funktio palauttaa niistä jonkun.
-*/
 
 const mostLikes = (blogs) => {
-    const authors = blogs.map(blog => {
-        return blog.author
+    let authorsLikes = []
+    blogs.forEach(blog => {
+        authorsLikes.push({
+            author: blog.author,
+            likes: blog.likes
+        })
     })
-    return authors.sort()
+    return mergeLikes(authorsLikes)
 }
 
 module.exports = {

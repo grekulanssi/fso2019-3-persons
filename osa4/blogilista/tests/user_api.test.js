@@ -1,5 +1,5 @@
-const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 const supertest = require('supertest')
 const User = require('../models/user')
 const helper = require('./test_helper')
@@ -11,12 +11,11 @@ const api = supertest(app)
 describe('when there is initially one user at db', () => {
     beforeEach(async () => {
         await User.deleteMany({})
-
-        const passwordHash = await bcrypt.hash('testisalasana', 10)
+        const saltRounds = 10
+        const passwordHash = await bcrypt.hash('salaisuus', saltRounds)
         const user = new User(
             { username: 'testuser', name: 'Teppo Testaaja', passwordHash }
         )
-
         await user.save()
     })
 
@@ -32,7 +31,7 @@ describe('when there is initially one user at db', () => {
         await api
             .post('/api/users')
             .send(newUser)
-            .expect(200)
+            .expect(201)
             .expect('Content-Type', /application\/json/)
 
         const usersAtEnd = await helper.usersInDb()

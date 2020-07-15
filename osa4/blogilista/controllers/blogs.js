@@ -22,11 +22,12 @@ blogsRouter.post('/', async (request, response) => {
         return response.status(400).end()
     }
 
-    const token = request.token
-    const decodedToken = jwt.verify(token, process.env.SECRET)
-    if(!token || !decodedToken.id) {
-        return response.status(401).json({ error: 'token missing or invalid' })
-    }
+    const reqToken = request.token
+    if(!reqToken) return response.status(401).json({ error: 'authentication token missing' })
+
+    const decodedToken = jwt.verify(reqToken, process.env.SECRET)
+    if(!decodedToken.id) return response.status(401).json({ error: 'authentication token verification failed' })
+
     const user = await User.findById(decodedToken.id)
 
     const blog = new Blog(
@@ -48,18 +49,30 @@ blogsRouter.post('/', async (request, response) => {
 blogsRouter.delete('/:id', async (request, response) => {
 
     const reqToken = request.token
+    if(!reqToken) return response.status(401).json({ error: 'authentication token missing' })
+
     const decodedToken = jwt.verify(reqToken, process.env.SECRET)
-    if(!reqToken || !decodedToken.id) {
-        return response.status(401).json({ error: 'token missing or invalid' })
-    }
+    if(!decodedToken.id) return response.status(401).json({ error: 'authentication token verification failed' })
+
     const blogId = request.params.id
     const blog = await Blog.findById(blogId)
+    if(!blog) {
+        console.log('NO BLOGGY BLOGG')
+        response.status(404).json({ error: 'blog you tried to delete was not found' })
+        return
+    }
+    if(!blog.user) {
+        console.log('NO BLOG.USER')
+        response.status(401).json({ error: 'blog does not have a user field' })
+        return
+    }
+
     const user = await User.findById(decodedToken.id)
-    if(blog.user.toString() === user._id) {
-        await Blog.remove(blogId)
-        return response.status(204).end()
+    if(blog.user.toString() === user._id.toString()) {
+        await Blog.findByIdAndRemove(blogId)
+        response.status(204).end()
     } else {
-        return response.status(401).json({ error: 'blog can be deleted only by user who has added it' })
+        response.status(401).json({ error: 'blog can be deleted only by user who has added it' })
     }
 })
 
@@ -74,11 +87,12 @@ blogsRouter.put('/:id', async (request, response) => {
         __v: body.__v
     }
     if(!blog.title || !blog.url) {
-        return response.status(400).end()
+        response.status(400).end()
+        return
     }
     if(!blog.likes) blog.likes = 0
     const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
-    return response.status(201).json(updatedBlog)
+    response.status(201).json(updatedBlog)
 })
 
 module.exports = blogsRouter

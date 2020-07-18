@@ -42,23 +42,26 @@ describe('blog api POST tests', () => {
     posted by him in the Telegram support channel on July 10, 2020 at 8:42:15 PM.
     Similar logic is used in all tests that require user authentication. */
     test('amount of blogs is increased by one', async () => {
-
+        // create new simple user
         const newUser = {
             username: 'tittelintuure',
             password: 'salaisuus'
         }
+        // post the user to db to make it "real"
         await api
             .post('/api/users')
             .send(newUser)
             .expect(201)
             .expect('Content-Type', /application\/json/)
 
+        // log in with this fresh user
         const response = await api
             .post('/api/login')
             .send({
                 username: newUser.username, password: newUser.password
             })
 
+        // post a blog with this user authenticated
         await api
             .post('/api/blogs')
             .set('Authorization', `bearer ${response.body.token}`)
